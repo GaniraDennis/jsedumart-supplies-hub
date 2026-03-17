@@ -1,6 +1,9 @@
 import Layout from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 
+const FACEBOOK_URL = "https://web.facebook.com/profile.php?id=61586640189614";
+const WHATSAPP_URL = "https://wa.me/254748332788";
+
 const About = () => (
   <Layout>
     <div className="bg-surface py-16">
@@ -17,7 +20,7 @@ const About = () => (
         <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
           <h2 className="font-display text-3xl font-bold mb-4">Our Mission</h2>
           <p className="text-muted-foreground leading-relaxed mb-4">
-            JSEdumart was born from a simple belief: every student deserves access to quality educational materials at prices that don't break the bank. Based in Nairobi, we've grown from a small stationery shop on Moi Avenue to one of Kenya's most trusted online bookstores.
+            JSEdumart was born from a simple belief: every student deserves access to quality educational materials at prices that don't break the bank. Based in Nairobi, we've grown from a small stationery shop to one of Kenya's most trusted online bookstores.
           </p>
           <p className="text-muted-foreground leading-relaxed">
             We work directly with manufacturers and publishers to bring you the best prices on everything from exercise books and pens to textbooks and art supplies.
@@ -40,15 +43,48 @@ const About = () => (
         </motion.div>
       </div>
 
+      {/* Google Maps */}
+      <div className="bg-card rounded-xl shadow-card overflow-hidden mb-16">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8176073905!2d36.8219!3d-1.2864!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMcKwMTcnMTEuMCJTIDM2wrA0OScxOC44IkU!5e0!3m2!1sen!2ske!4v1"
+          width="100%"
+          height="300"
+          style={{ border: 0 }}
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          title="JS Edumart Location"
+        />
+        <div className="p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h3 className="font-display font-bold text-lg">Visit Our Shop</h3>
+            <p className="text-sm text-muted-foreground">JS Edumart Books & Stationery, Nairobi CBD, Kenya</p>
+            <p className="text-sm text-muted-foreground mt-1"><i className="fa-solid fa-clock mr-1 text-accent" />Mon-Fri: 8AM - 7PM | Sat: 9AM - 5PM</p>
+          </div>
+          <a
+            href="https://share.google/80n1IuQZLwGgYx8bK"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-xl font-display font-bold hover:-translate-y-0.5 transition-all shadow-md"
+          >
+            <i className="fa-solid fa-directions" /> Get Directions
+          </a>
+        </div>
+      </div>
+
       <div className="bg-primary text-primary-foreground rounded-xl p-10 text-center">
         <h2 className="font-display text-2xl font-bold mb-3">Join Our Community</h2>
         <p className="opacity-80 mb-6 max-w-lg mx-auto">Follow us on social media for study tips, special offers, and new product announcements.</p>
         <div className="flex gap-3 justify-center">
-          {["fa-facebook-f", "fa-twitter", "fa-instagram", "fa-whatsapp"].map((icon) => (
-            <a key={icon} href="#" className="w-12 h-12 rounded-xl bg-primary-foreground/10 flex items-center justify-center hover:bg-accent transition-colors">
-              <i className={`fa-brands ${icon} text-lg`} />
-            </a>
-          ))}
+          <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-xl bg-primary-foreground/10 flex items-center justify-center hover:bg-accent transition-colors" aria-label="Facebook">
+            <i className="fa-brands fa-facebook-f text-lg" />
+          </a>
+          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-xl bg-primary-foreground/10 flex items-center justify-center hover:bg-accent transition-colors" aria-label="WhatsApp">
+            <i className="fa-brands fa-whatsapp text-lg" />
+          </a>
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-xl bg-primary-foreground/10 flex items-center justify-center hover:bg-accent transition-colors" aria-label="Instagram">
+            <i className="fa-brands fa-instagram text-lg" />
+          </a>
         </div>
       </div>
     </div>

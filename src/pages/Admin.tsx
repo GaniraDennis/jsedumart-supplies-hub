@@ -21,11 +21,21 @@ const mockOrders = [
 ];
 
 const Admin = () => {
-  const { user, logout } = useAuth();
+  const { user, profile, isAdmin, isLoading, logout } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  if (!user?.isAdmin) return <Navigate to="/login" />;
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-surface">
+        <i className="fa-solid fa-spinner fa-spin text-3xl text-accent" />
+      </div>
+    );
+  }
+
+  if (!user || !isAdmin) return <Navigate to="/login" />;
+
+  const displayName = profile?.display_name || user.email?.split("@")[0] || "Admin";
 
   return (
     <div className="flex h-screen bg-surface">
@@ -69,7 +79,7 @@ const Admin = () => {
             <h1 className="font-display text-lg font-bold capitalize">{activeTab}</h1>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-muted-foreground">{user.name}</span>
+            <span className="text-sm text-muted-foreground">{displayName}</span>
             <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-accent-foreground text-sm font-bold">A</div>
           </div>
         </header>
@@ -93,7 +103,6 @@ const Admin = () => {
                   </div>
                 ))}
               </div>
-
               <div className="bg-card rounded-xl shadow-card p-6">
                 <h3 className="font-display font-bold mb-4"><i className="fa-solid fa-clock-rotate-left mr-2 text-accent" />Recent Orders</h3>
                 <div className="overflow-x-auto">
@@ -251,8 +260,9 @@ const Admin = () => {
             <div className="max-w-2xl space-y-6">
               {[
                 { title: "Payment Methods", fields: [{ label: "M-Pesa Till Number", value: "123456" }, { label: "Accept Cash on Delivery", value: "Yes" }] },
-                { title: "Shipping", fields: [{ label: "Standard Delivery Fee", value: "KSh 150" }, { label: "Free Delivery Threshold", value: "KSh 2,000" }] },
+                { title: "Shipping", fields: [{ label: "Standard Delivery Fee", value: "KSh 150" }, { label: "Free Delivery Threshold", value: "KSh 5,000" }] },
                 { title: "Store Info", fields: [{ label: "Currency", value: "KSh (Kenyan Shilling)" }, { label: "Tax Rate", value: "16% VAT" }] },
+                { title: "Contact", fields: [{ label: "WhatsApp", value: "0748 332 788" }, { label: "Email", value: "jsbookshop4@gmail.com" }] },
               ].map((section) => (
                 <div key={section.title} className="bg-card rounded-xl shadow-card p-6">
                   <h3 className="font-display font-bold mb-4">{section.title}</h3>

@@ -4,11 +4,22 @@ import { Link, Navigate } from "react-router-dom";
 import { useStore } from "@/context/StoreContext";
 
 const Account = () => {
-  const { user, logout } = useAuth();
+  const { user, profile, logout, isLoading } = useAuth();
   const { cart, wishlist } = useStore();
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="container mx-auto py-20 text-center">
+          <i className="fa-solid fa-spinner fa-spin text-2xl text-accent" />
+        </div>
+      </Layout>
+    );
+  }
 
   if (!user) return <Navigate to="/login" />;
 
+  const displayName = profile?.display_name || user.email?.split("@")[0] || "User";
   const orders = JSON.parse(localStorage.getItem("jsedumart_last_order") || "null");
 
   return (
@@ -22,7 +33,7 @@ const Account = () => {
             <div className="w-20 h-20 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-3">
               <i className="fa-solid fa-user text-accent text-3xl" />
             </div>
-            <h3 className="font-display font-bold text-lg">{user.name}</h3>
+            <h3 className="font-display font-bold text-lg">{displayName}</h3>
             <p className="text-sm text-muted-foreground">{user.email}</p>
             <button onClick={logout} className="mt-4 text-sm text-discount hover:underline">
               <i className="fa-solid fa-right-from-bracket mr-1" /> Sign Out

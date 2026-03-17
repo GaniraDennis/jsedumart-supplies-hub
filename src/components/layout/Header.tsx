@@ -2,22 +2,15 @@ import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useStore } from "@/context/StoreContext";
 import { useAuth } from "@/context/AuthContext";
+import { useLanguage } from "@/context/LanguageContext";
 
 const Header = () => {
   const { cartCount } = useStore();
-  const { user, logout } = useAuth();
+  const { user, profile, isAdmin, logout } = useAuth();
+  const { language, setLanguage, t } = useLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
-
-  const navLinks = [
-    { to: "/", label: "Home", icon: "fa-house" },
-    { to: "/shop", label: "Shop", icon: "fa-store" },
-    { to: "/offers", label: "Offers", icon: "fa-tags" },
-    { to: "/blog", label: "Blog", icon: "fa-newspaper" },
-    { to: "/about", label: "About", icon: "fa-info-circle" },
-    { to: "/contact", label: "Contact", icon: "fa-envelope" },
-  ];
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,23 +19,28 @@ const Header = () => {
     }
   };
 
+  const displayName = profile?.display_name || user?.email?.split("@")[0] || "";
+
   return (
     <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-md shadow-sm">
       {/* Top bar */}
       <div className="bg-primary">
         <div className="container mx-auto flex items-center justify-between py-1.5 text-xs text-primary-foreground">
           <span className="hidden sm:inline">
-            <i className="fa-solid fa-truck-fast mr-1" /> Free delivery in Nairobi CBD for orders over KSh 2,000
+            <i className="fa-solid fa-truck-fast mr-1" /> {t("freeDelivery")}
           </span>
-          <span className="sm:hidden text-center w-full">
+          <span className="sm:hidden text-center w-full truncate px-2">
             <i className="fa-solid fa-truck-fast mr-1" /> Free delivery over KSh 2,000
           </span>
           <div className="hidden sm:flex items-center gap-4">
-            <a href="tel:+254712345678" className="hover:underline">
-              <i className="fa-solid fa-phone mr-1" /> +254 712 345 678
+            <a href="https://wa.me/254748332788" className="hover:underline">
+              <i className="fa-brands fa-whatsapp mr-1" /> 0748 332 788
+            </a>
+            <a href="mailto:jsbookshop4@gmail.com" className="hover:underline">
+              <i className="fa-solid fa-envelope mr-1" /> jsbookshop4@gmail.com
             </a>
             <Link to="/track-order" className="hover:underline">
-              <i className="fa-solid fa-location-dot mr-1" /> Track Order
+              <i className="fa-solid fa-location-dot mr-1" /> {t("trackOrder")}
             </Link>
           </div>
         </div>
@@ -50,6 +48,7 @@ const Header = () => {
 
       {/* Main header */}
       <div className="container mx-auto flex items-center justify-between gap-4 py-3">
+        {/* Logo - left */}
         <Link to="/" className="flex items-center gap-2 shrink-0">
           <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
             <i className="fa-solid fa-book-open text-primary-foreground text-lg" />
@@ -60,12 +59,12 @@ const Header = () => {
           </div>
         </Link>
 
-        {/* Search */}
+        {/* Search - center */}
         <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-xl">
           <div className="relative w-full">
             <input
               type="text"
-              placeholder="Search books, stationery, supplies..."
+              placeholder={t("searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-4 pr-12 py-2.5 rounded-xl border border-border bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
@@ -76,13 +75,23 @@ const Header = () => {
           </div>
         </form>
 
-        {/* Actions */}
-        <div className="flex items-center gap-2">
+        {/* Right side: nav + actions */}
+        <div className="flex items-center gap-1">
+          {/* Language toggle */}
+          <button
+            onClick={() => setLanguage(language === "en" ? "sw" : "en")}
+            className="hidden sm:flex items-center gap-1 px-2 py-1.5 rounded-lg hover:bg-muted transition-colors text-xs font-semibold"
+            title={language === "en" ? "Switch to Swahili" : "Switch to English"}
+          >
+            <span className="text-base">{language === "en" ? "🇰🇪" : "🇬🇧"}</span>
+            <span className="hidden lg:inline">{language === "en" ? "SW" : "EN"}</span>
+          </button>
+
           {user ? (
-            <div className="hidden sm:flex items-center gap-2">
-              <Link to={user.isAdmin ? "/admin" : "/account"} className="flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-muted transition-colors text-sm">
+            <div className="hidden sm:flex items-center gap-1">
+              <Link to={isAdmin ? "/admin" : "/account"} className="flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-muted transition-colors text-sm">
                 <i className="fa-solid fa-user" />
-                <span className="hidden lg:inline">{user.name}</span>
+                <span className="hidden lg:inline">{displayName}</span>
               </Link>
               <button onClick={logout} className="px-3 py-2 rounded-lg hover:bg-muted transition-colors text-sm text-muted-foreground">
                 <i className="fa-solid fa-right-from-bracket" />
@@ -91,7 +100,7 @@ const Header = () => {
           ) : (
             <Link to="/login" className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-muted transition-colors text-sm">
               <i className="fa-solid fa-user" />
-              <span className="hidden lg:inline">Login</span>
+              <span className="hidden lg:inline">{t("login")}</span>
             </Link>
           )}
           <Link to="/wishlist" className="relative px-3 py-2 rounded-lg hover:bg-muted transition-colors">
@@ -114,10 +123,17 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Desktop nav */}
+      {/* Desktop nav - RIGHT aligned */}
       <nav className="hidden md:block border-t border-border">
-        <div className="container mx-auto flex items-center gap-1 py-1">
-          {navLinks.map((link) => (
+        <div className="container mx-auto flex items-center justify-end gap-1 py-1">
+          {[
+            { to: "/", label: t("home"), icon: "fa-house" },
+            { to: "/shop", label: t("shop"), icon: "fa-store" },
+            { to: "/offers", label: t("offers"), icon: "fa-tags" },
+            { to: "/blog", label: t("blog"), icon: "fa-newspaper" },
+            { to: "/about", label: t("about"), icon: "fa-info-circle" },
+            { to: "/contact", label: t("contact"), icon: "fa-envelope" },
+          ].map((link) => (
             <Link
               key={link.to}
               to={link.to}
@@ -141,7 +157,7 @@ const Header = () => {
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search..."
+                placeholder={t("searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-4 pr-10 py-2.5 rounded-xl border border-border bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
@@ -152,7 +168,22 @@ const Header = () => {
             </div>
           </form>
           <div className="flex flex-col pb-3">
-            {navLinks.map((link) => (
+            {/* Language toggle mobile */}
+            <button
+              onClick={() => setLanguage(language === "en" ? "sw" : "en")}
+              className="px-6 py-3 text-sm font-medium text-foreground hover:bg-muted text-left"
+            >
+              <span className="mr-2">{language === "en" ? "🇰🇪" : "🇬🇧"}</span>
+              {language === "en" ? "Swahili" : "English"}
+            </button>
+            {[
+              { to: "/", label: t("home"), icon: "fa-house" },
+              { to: "/shop", label: t("shop"), icon: "fa-store" },
+              { to: "/offers", label: t("offers"), icon: "fa-tags" },
+              { to: "/blog", label: t("blog"), icon: "fa-newspaper" },
+              { to: "/about", label: t("about"), icon: "fa-info-circle" },
+              { to: "/contact", label: t("contact"), icon: "fa-envelope" },
+            ].map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
@@ -169,8 +200,18 @@ const Header = () => {
             ))}
             {!user && (
               <Link to="/login" onClick={() => setMobileOpen(false)} className="px-6 py-3 text-sm font-medium text-foreground hover:bg-muted">
-                <i className="fa-solid fa-user mr-2 w-5" /> Login / Register
+                <i className="fa-solid fa-user mr-2 w-5" /> {t("login")} / {t("signup")}
               </Link>
+            )}
+            {user && (
+              <>
+                <Link to="/account" onClick={() => setMobileOpen(false)} className="px-6 py-3 text-sm font-medium text-foreground hover:bg-muted">
+                  <i className="fa-solid fa-user mr-2 w-5" /> {t("myAccount")}
+                </Link>
+                <button onClick={() => { logout(); setMobileOpen(false); }} className="px-6 py-3 text-sm font-medium text-foreground hover:bg-muted text-left">
+                  <i className="fa-solid fa-right-from-bracket mr-2 w-5" /> {t("logout")}
+                </button>
+              </>
             )}
           </div>
         </div>
