@@ -97,14 +97,14 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const removeFromWishlist = (productId: number) => {
+  const removeFromWishlist = (productId: number | string) => {
     setWishlist((prev) => prev.filter((item) => item.id !== productId));
   };
 
-  const isInWishlist = (productId: number) =>
+  const isInWishlist = (productId: number | string) =>
     wishlist.some((item) => item.id === productId);
 
-  const isInCart = (productId: number) =>
+  const isInCart = (productId: number | string) =>
     cart.some((item) => item.id === productId);
 
   const applyCoupon = () => {

@@ -21,7 +21,7 @@ export interface DbProduct {
 
 /** Convert DB row to the legacy Product shape used by ProductCard / StoreContext */
 export const toProduct = (p: DbProduct): Product => ({
-  id: p.id as unknown as number, // cards use id for keying
+  id: p.id as any,
   name: p.name,
   price: p.price,
   oldPrice: p.old_price ?? undefined,
