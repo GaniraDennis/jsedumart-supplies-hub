@@ -1,13 +1,14 @@
 import { useParams, Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import ProductCard from "@/components/products/ProductCard";
-import { products } from "@/data/products";
+import { useProducts } from "@/hooks/useProducts";
 import { useStore } from "@/context/StoreContext";
 import { useState } from "react";
 
 const ProductDetails = () => {
   const { id } = useParams();
-  const product = products.find((p) => p.id === Number(id));
+  const { data: products = [] } = useProducts();
+  const product = products.find((p) => String(p.id) === id);
   const { addToCart, addToWishlist, isInWishlist } = useStore();
   const [qty, setQty] = useState(1);
 

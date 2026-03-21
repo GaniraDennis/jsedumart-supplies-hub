@@ -1,29 +1,58 @@
 import { useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { products } from "@/data/products";
+import { useDbProducts, useAddProduct, useUpdateProduct, useDeleteProduct, type DbProduct } from "@/hooks/useProducts";
+import { toast } from "sonner";
 
 const tabs = [
   { id: "overview", label: "Dashboard", icon: "fa-chart-line" },
   { id: "products", label: "Products", icon: "fa-box" },
   { id: "orders", label: "Orders", icon: "fa-shopping-bag" },
   { id: "customers", label: "Customers", icon: "fa-users" },
-  { id: "content", label: "Content", icon: "fa-file-lines" },
   { id: "settings", label: "Settings", icon: "fa-gear" },
-  { id: "reports", label: "Reports", icon: "fa-chart-bar" },
+];
+
+const emptyProduct = {
+  name: "",
+  price: 0,
+  old_price: null as number | null,
+  image: "",
+  category: "",
+  subcategory: "",
+  badge: null as string | null,
+  description: "",
+  in_stock: true,
+  rating: 0,
+  reviews: 0,
+};
+
+const CATEGORIES = [
+  { label: "Art Supplies", sub: "art-supplies" },
+  { label: "Writing Instruments", sub: "writing-instruments" },
+  { label: "School Stationery", sub: "school-stationery" },
+  { label: "Office Supplies", sub: "office-supplies" },
+  { label: "Textbooks & Educational", sub: "textbooks" },
+  { label: "Exercise Books", sub: "exercise-books" },
 ];
 
 const mockOrders = [
   { id: "JSE-ABC123", customer: "John Kamau", total: 1280, status: "Processing", date: "2024-01-15" },
   { id: "JSE-DEF456", customer: "Mary Wanjiku", total: 750, status: "Shipped", date: "2024-01-14" },
   { id: "JSE-GHI789", customer: "Peter Odhiambo", total: 430, status: "Delivered", date: "2024-01-13" },
-  { id: "JSE-JKL012", customer: "Agnes Muthoni", total: 2100, status: "Processing", date: "2024-01-12" },
 ];
 
 const Admin = () => {
   const { user, profile, isAdmin, isLoading, logout } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [form, setForm] = useState(emptyProduct);
+
+  const { data: products = [], isLoading: productsLoading } = useDbProducts();
+  const addProduct = useAddProduct();
+  const updateProduct = useUpdateProduct();
+  const deleteProduct = useDeleteProduct();
 
   if (isLoading) {
     return (
@@ -36,6 +65,66 @@ const Admin = () => {
   if (!user || !isAdmin) return <Navigate to="/login" />;
 
   const displayName = profile?.display_name || user.email?.split("@")[0] || "Admin";
+
+  const openAdd = () => {
+    setForm(emptyProduct);
+    setEditingId(null);
+    setShowForm(true);
+  };
+
+  const openEdit = (p: DbProduct) => {
+    setForm({
+      name: p.name,
+      price: p.price,
+      old_price: p.old_price,
+      image: p.image,
+      category: p.category,
+      subcategory: p.subcategory,
+      badge: p.badge,
+      description: p.description,
+      in_stock: p.in_stock,
+      rating: p.rating,
+      reviews: p.reviews,
+    });
+    setEditingId(p.id);
+    setShowForm(true);
+  };
+
+  const handleSave = async () => {
+    if (!form.name || !form.image) {
+      toast.error("Name and image URL are required");
+      return;
+    }
+    try {
+      if (editingId) {
+        await updateProduct.mutateAsync({ id: editingId, ...form });
+        toast.success("Product updated!");
+      } else {
+        await addProduct.mutateAsync(form);
+        toast.success("Product added!");
+      }
+      setShowForm(false);
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this product?")) return;
+    try {
+      await deleteProduct.mutateAsync(id);
+      toast.success("Product deleted");
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+  };
+
+  const setCategory = (label: string) => {
+    const cat = CATEGORIES.find((c) => c.label === label);
+    setForm({ ...form, category: label, subcategory: cat?.sub || "" });
+  };
+
+  const inp = "w-full px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/50";
 
   return (
     <div className="flex h-screen bg-surface">
@@ -69,7 +158,7 @@ const Admin = () => {
         </div>
       </aside>
 
-      {/* Main Content */}
+      {/* Main */}
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="bg-card shadow-sm px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -85,6 +174,7 @@ const Admin = () => {
         </header>
 
         <main className="flex-1 overflow-auto p-6">
+          {/* ── OVERVIEW ── */}
           {activeTab === "overview" && (
             <div className="space-y-6">
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -107,28 +197,14 @@ const Admin = () => {
                 <h3 className="font-display font-bold mb-4"><i className="fa-solid fa-clock-rotate-left mr-2 text-accent" />Recent Orders</h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-border">
-                        <th className="text-left py-3 px-2 text-muted-foreground font-medium">Order ID</th>
-                        <th className="text-left py-3 px-2 text-muted-foreground font-medium">Customer</th>
-                        <th className="text-left py-3 px-2 text-muted-foreground font-medium">Total</th>
-                        <th className="text-left py-3 px-2 text-muted-foreground font-medium">Status</th>
-                        <th className="text-left py-3 px-2 text-muted-foreground font-medium">Date</th>
-                      </tr>
-                    </thead>
+                    <thead><tr className="border-b border-border"><th className="text-left py-3 px-2 text-muted-foreground font-medium">Order ID</th><th className="text-left py-3 px-2 text-muted-foreground font-medium">Customer</th><th className="text-left py-3 px-2 text-muted-foreground font-medium">Total</th><th className="text-left py-3 px-2 text-muted-foreground font-medium">Status</th><th className="text-left py-3 px-2 text-muted-foreground font-medium">Date</th></tr></thead>
                     <tbody>
                       {mockOrders.map((order) => (
                         <tr key={order.id} className="border-b border-border/50 hover:bg-muted/50">
                           <td className="py-3 px-2 font-mono text-xs">{order.id}</td>
                           <td className="py-3 px-2">{order.customer}</td>
                           <td className="py-3 px-2 font-semibold">KSh {order.total.toLocaleString()}</td>
-                          <td className="py-3 px-2">
-                            <span className={`px-2 py-1 rounded-lg text-xs font-semibold ${
-                              order.status === "Delivered" ? "bg-success/10 text-success" :
-                              order.status === "Shipped" ? "bg-accent/10 text-accent" :
-                              "bg-warning/10 text-warning"
-                            }`}>{order.status}</span>
-                          </td>
+                          <td className="py-3 px-2"><span className={`px-2 py-1 rounded-lg text-xs font-semibold ${order.status === "Delivered" ? "bg-success/10 text-success" : order.status === "Shipped" ? "bg-accent/10 text-accent" : "bg-warning/10 text-warning"}`}>{order.status}</span></td>
                           <td className="py-3 px-2 text-muted-foreground">{order.date}</td>
                         </tr>
                       ))}
@@ -139,67 +215,125 @@ const Admin = () => {
             </div>
           )}
 
+          {/* ── PRODUCTS ── */}
           {activeTab === "products" && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <p className="text-muted-foreground">{products.length} products</p>
-                <button className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-semibold">
+                <button onClick={openAdd} className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">
                   <i className="fa-solid fa-plus" /> Add Product
                 </button>
               </div>
-              <div className="bg-card rounded-xl shadow-card overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-border bg-muted/50">
-                      <th className="text-left py-3 px-4 font-medium">Product</th>
-                      <th className="text-left py-3 px-4 font-medium">Category</th>
-                      <th className="text-left py-3 px-4 font-medium">Price</th>
-                      <th className="text-left py-3 px-4 font-medium">Stock</th>
-                      <th className="text-left py-3 px-4 font-medium">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {products.map((p) => (
-                      <tr key={p.id} className="border-b border-border/50 hover:bg-muted/50">
-                        <td className="py-3 px-4">
-                          <div className="flex items-center gap-3">
-                            <img src={p.image} alt={p.name} className="w-10 h-10 rounded-lg object-contain bg-surface" />
-                            <span className="font-medium">{p.name}</span>
-                          </div>
-                        </td>
-                        <td className="py-3 px-4 text-muted-foreground">{p.category}</td>
-                        <td className="py-3 px-4 font-semibold">KSh {p.price}</td>
-                        <td className="py-3 px-4">
-                          <span className="px-2 py-1 rounded-lg bg-success/10 text-success text-xs font-semibold">In Stock</span>
-                        </td>
-                        <td className="py-3 px-4">
-                          <div className="flex gap-2">
-                            <button className="p-1.5 rounded hover:bg-muted text-accent"><i className="fa-solid fa-pen-to-square" /></button>
-                            <button className="p-1.5 rounded hover:bg-muted text-discount"><i className="fa-solid fa-trash" /></button>
-                          </div>
-                        </td>
+
+              {/* Product form modal */}
+              {showForm && (
+                <div className="fixed inset-0 bg-ink/50 z-50 flex items-center justify-center p-4" onClick={() => setShowForm(false)}>
+                  <div className="bg-card rounded-xl shadow-card-hover w-full max-w-lg max-h-[90vh] overflow-auto p-6 space-y-4" onClick={(e) => e.stopPropagation()}>
+                    <h3 className="font-display font-bold text-lg">{editingId ? "Edit Product" : "Add New Product"}</h3>
+                    <div>
+                      <label className="text-sm font-medium mb-1 block">Product Name *</label>
+                      <input className={inp} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. HB Pencils" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-sm font-medium mb-1 block">Price (KSh) *</label>
+                        <input type="number" className={inp} value={form.price} onChange={(e) => setForm({ ...form, price: +e.target.value })} />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium mb-1 block">Old Price</label>
+                        <input type="number" className={inp} value={form.old_price ?? ""} onChange={(e) => setForm({ ...form, old_price: e.target.value ? +e.target.value : null })} />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium mb-1 block">Image URL *</label>
+                      <input className={inp} value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="https://..." />
+                      {form.image && <img src={form.image} alt="" className="mt-2 w-20 h-20 rounded-lg object-contain bg-surface" />}
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-sm font-medium mb-1 block">Category</label>
+                        <select className={inp} value={form.category} onChange={(e) => setCategory(e.target.value)}>
+                          <option value="">Select</option>
+                          {CATEGORIES.map((c) => <option key={c.sub} value={c.label}>{c.label}</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium mb-1 block">Badge</label>
+                        <input className={inp} value={form.badge ?? ""} onChange={(e) => setForm({ ...form, badge: e.target.value || null })} placeholder="e.g. New Arrival" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium mb-1 block">Description</label>
+                      <textarea className={inp + " resize-none"} rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <label className="flex items-center gap-2 text-sm">
+                        <input type="checkbox" checked={form.in_stock} onChange={(e) => setForm({ ...form, in_stock: e.target.checked })} className="accent-accent" /> In Stock
+                      </label>
+                    </div>
+                    <div className="flex gap-3 pt-2">
+                      <button onClick={handleSave} disabled={addProduct.isPending || updateProduct.isPending} className="bg-primary text-primary-foreground px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-50">
+                        {addProduct.isPending || updateProduct.isPending ? <i className="fa-solid fa-spinner fa-spin mr-2" /> : null}
+                        {editingId ? "Update" : "Add"} Product
+                      </button>
+                      <button onClick={() => setShowForm(false)} className="px-6 py-2.5 rounded-lg font-semibold text-sm border border-border hover:bg-muted transition-colors">Cancel</button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {productsLoading ? (
+                <div className="flex justify-center py-12"><i className="fa-solid fa-spinner fa-spin text-2xl text-accent" /></div>
+              ) : (
+                <div className="bg-card rounded-xl shadow-card overflow-hidden">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-border bg-muted/50">
+                        <th className="text-left py-3 px-4 font-medium">Product</th>
+                        <th className="text-left py-3 px-4 font-medium">Category</th>
+                        <th className="text-left py-3 px-4 font-medium">Price</th>
+                        <th className="text-left py-3 px-4 font-medium">Stock</th>
+                        <th className="text-left py-3 px-4 font-medium">Actions</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {products.map((p) => (
+                        <tr key={p.id} className="border-b border-border/50 hover:bg-muted/50">
+                          <td className="py-3 px-4">
+                            <div className="flex items-center gap-3">
+                              <img src={p.image} alt={p.name} className="w-10 h-10 rounded-lg object-contain bg-surface" />
+                              <span className="font-medium">{p.name}</span>
+                            </div>
+                          </td>
+                          <td className="py-3 px-4 text-muted-foreground">{p.category}</td>
+                          <td className="py-3 px-4 font-semibold">KSh {p.price}</td>
+                          <td className="py-3 px-4">
+                            <span className={`px-2 py-1 rounded-lg text-xs font-semibold ${p.in_stock ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"}`}>
+                              {p.in_stock ? "In Stock" : "Out of Stock"}
+                            </span>
+                          </td>
+                          <td className="py-3 px-4">
+                            <div className="flex gap-2">
+                              <button onClick={() => openEdit(p)} className="p-1.5 rounded hover:bg-muted text-accent"><i className="fa-solid fa-pen-to-square" /></button>
+                              <button onClick={() => handleDelete(p.id)} className="p-1.5 rounded hover:bg-muted text-destructive"><i className="fa-solid fa-trash" /></button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           )}
 
+          {/* ── ORDERS ── */}
           {activeTab === "orders" && (
             <div className="bg-card rounded-xl shadow-card p-6">
               <h3 className="font-display font-bold mb-4">All Orders</h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-border">
-                      <th className="text-left py-3 px-2 font-medium">Order ID</th>
-                      <th className="text-left py-3 px-2 font-medium">Customer</th>
-                      <th className="text-left py-3 px-2 font-medium">Total</th>
-                      <th className="text-left py-3 px-2 font-medium">Status</th>
-                      <th className="text-left py-3 px-2 font-medium">Actions</th>
-                    </tr>
-                  </thead>
+                  <thead><tr className="border-b border-border"><th className="text-left py-3 px-2 font-medium">Order ID</th><th className="text-left py-3 px-2 font-medium">Customer</th><th className="text-left py-3 px-2 font-medium">Total</th><th className="text-left py-3 px-2 font-medium">Status</th></tr></thead>
                   <tbody>
                     {mockOrders.map((order) => (
                       <tr key={order.id} className="border-b border-border/50">
@@ -211,9 +345,6 @@ const Admin = () => {
                             <option>Processing</option><option>Shipped</option><option>Delivered</option><option>Cancelled</option>
                           </select>
                         </td>
-                        <td className="py-3 px-2">
-                          <button className="text-accent text-xs hover:underline"><i className="fa-solid fa-print mr-1" />Invoice</button>
-                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -222,11 +353,12 @@ const Admin = () => {
             </div>
           )}
 
+          {/* ── CUSTOMERS ── */}
           {activeTab === "customers" && (
             <div className="bg-card rounded-xl shadow-card p-6">
               <h3 className="font-display font-bold mb-4">Customer List</h3>
               <div className="space-y-3">
-                {["John Kamau", "Mary Wanjiku", "Peter Odhiambo", "Agnes Muthoni"].map((name, i) => (
+                {["John Kamau", "Mary Wanjiku", "Peter Odhiambo"].map((name, i) => (
                   <div key={name} className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent font-bold">{name[0]}</div>
@@ -242,20 +374,7 @@ const Admin = () => {
             </div>
           )}
 
-          {activeTab === "content" && (
-            <div className="space-y-4">
-              {["Homepage Banner", "Blog Posts", "Category Pages", "About Page"].map((item) => (
-                <div key={item} className="bg-card rounded-xl shadow-card p-5 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <i className="fa-solid fa-file-lines text-accent" />
-                    <span className="font-semibold">{item}</span>
-                  </div>
-                  <button className="text-sm text-accent hover:underline"><i className="fa-solid fa-pen mr-1" />Edit</button>
-                </div>
-              ))}
-            </div>
-          )}
-
+          {/* ── SETTINGS ── */}
           {activeTab === "settings" && (
             <div className="max-w-2xl space-y-6">
               {[
@@ -274,23 +393,6 @@ const Admin = () => {
                       </div>
                     ))}
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {activeTab === "reports" && (
-            <div className="grid md:grid-cols-2 gap-6">
-              {[
-                { title: "Sales Report", icon: "fa-chart-line", desc: "View daily, weekly, monthly sales data" },
-                { title: "Product Performance", icon: "fa-ranking-star", desc: "Top selling and low performing products" },
-                { title: "Customer Insights", icon: "fa-users-viewfinder", desc: "Customer demographics and behavior" },
-                { title: "Inventory Report", icon: "fa-warehouse", desc: "Stock levels and reorder alerts" },
-              ].map((r) => (
-                <div key={r.title} className="bg-card rounded-xl shadow-card p-6 hover:shadow-card-hover transition-all cursor-pointer">
-                  <i className={`fa-solid ${r.icon} text-accent text-2xl mb-3`} />
-                  <h3 className="font-display font-bold">{r.title}</h3>
-                  <p className="text-sm text-muted-foreground mt-1">{r.desc}</p>
                 </div>
               ))}
             </div>

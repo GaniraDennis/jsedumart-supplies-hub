@@ -2,7 +2,8 @@ import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import ProductCard from "@/components/products/ProductCard";
-import { products, categories } from "@/data/products";
+import { categories } from "@/data/products";
+import { useProducts } from "@/hooks/useProducts";
 
 const Shop = () => {
   const [searchParams] = useSearchParams();
@@ -10,6 +11,7 @@ const Shop = () => {
   const [selectedCategory, setSelectedCategory] = useState(categoryParam || "all");
   const [sortBy, setSortBy] = useState("featured");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
+  const { data: products = [] } = useProducts();
 
   const filtered = useMemo(() => {
     let result = products;

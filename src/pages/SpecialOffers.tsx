@@ -1,9 +1,9 @@
 import Layout from "@/components/layout/Layout";
 import ProductCard from "@/components/products/ProductCard";
-import { products } from "@/data/products";
+import { useProducts } from "@/hooks/useProducts";
 
 const SpecialOffers = () => {
-  // Simulate offers with discounted prices
+  const { data: products = [] } = useProducts();
   const offers = products.filter(p => p.badge).map(p => ({ ...p, oldPrice: Math.round(p.price * 1.3) }));
 
   return (

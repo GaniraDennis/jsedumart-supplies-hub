@@ -1,11 +1,12 @@
 import { useSearchParams, Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import ProductCard from "@/components/products/ProductCard";
-import { products } from "@/data/products";
+import { useProducts } from "@/hooks/useProducts";
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q") || "";
+  const { data: products = [] } = useProducts();
   const results = products.filter((p) =>
     p.name.toLowerCase().includes(query.toLowerCase()) ||
     p.category.toLowerCase().includes(query.toLowerCase()) ||
