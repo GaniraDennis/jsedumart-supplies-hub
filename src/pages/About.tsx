@@ -62,7 +62,7 @@ const About = () => (
             <p className="text-sm text-muted-foreground mt-1"><i className="fa-solid fa-clock mr-1 text-accent" />Mon-Fri: 8AM - 7PM | Sat: 9AM - 5PM</p>
           </div>
           <a
-            href="https://share.google/c0cTQ96AfCblQRyxx"
+            href="https://share.google/qv62A7CY3yaXoUTeo"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-xl font-display font-bold hover:-translate-y-0.5 transition-all shadow-md"
