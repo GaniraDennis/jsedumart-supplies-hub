@@ -93,7 +93,7 @@ const Index = () => {
               to="/shop?category=textbooks"
               className="inline-flex items-center justify-center gap-2 bg-primary-foreground/10 text-primary-foreground px-8 py-4 rounded-xl font-display font-bold text-lg border border-primary-foreground/20 hover:bg-primary-foreground/20 transition-all backdrop-blur-sm"
             >
-              <i className="fa-solid fa-book" /> View Textbooks
+              <i className="fa-solid fa-book" /> Browse Novels & Books
             </Link>
           </motion.div>
 
