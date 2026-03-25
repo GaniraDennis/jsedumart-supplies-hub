@@ -26,7 +26,7 @@ const Contact = () => {
         <div className="grid md:grid-cols-3 gap-8">
           <div className="space-y-4">
             {[
-              { icon: "fa-location-dot", title: "Visit Us", text: "JS Edumart Books & Stationery\nNairobi CBD, Kenya" },
+              { icon: "fa-location-dot", title: "Visit Us", text: "JSEdumart Books & Stationery\nKabiria Stage, Nairobi" },
               { icon: "fa-brands fa-whatsapp", title: "WhatsApp", text: "0748 332 788", href: WHATSAPP_URL },
               { icon: "fa-envelope", title: "Email Us", text: "jsbookshop4@gmail.com", href: "mailto:jsbookshop4@gmail.com" },
               { icon: "fa-clock", title: "Working Hours", text: "Mon-Fri: 8AM - 7PM\nSat: 9AM - 5PM" },
@@ -62,7 +62,7 @@ const Contact = () => {
             {/* Google Maps */}
             <div className="bg-card rounded-xl shadow-card overflow-hidden">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8176!2d36.8219!3d-1.2864!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10d22f2ef7c7%3A0x4c3ef5d8e8f8a8a8!2sJS+Edumart+Books+and+Stationery+Shop!5e0!3m2!1sen!2ske!4v1"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.85!2d36.7468!3d-1.2780!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f10d22f2ef7c7%3A0x4c3ef5d8e8f8a8a8!2sKabiria+Stage!5e0!3m2!1sen!2ske!4v1"
                 width="100%"
                 height="250"
                 style={{ border: 0 }}
@@ -74,11 +74,11 @@ const Contact = () => {
               />
               <div className="p-4 flex items-center justify-between">
                 <div>
-                  <p className="font-display font-semibold text-sm">JS Edumart Books & Stationery</p>
-                  <p className="text-xs text-muted-foreground">Nairobi CBD, Kenya</p>
+                  <p className="font-display font-semibold text-sm">JSEdumart Books & Stationery</p>
+                  <p className="text-xs text-muted-foreground">Kabiria Stage, Nairobi</p>
                 </div>
                 <a
-                  href="https://share.google/c0cTQ96AfCblQRyxx"
+                  href="https://share.google/qv62A7CY3yaXoUTeo"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity"

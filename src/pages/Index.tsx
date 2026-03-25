@@ -7,9 +7,9 @@ import { categories } from "@/data/products";
 import { useProducts } from "@/hooks/useProducts";
 
 const heroLines = [
-  "Everything Students Need in One Place",
-  "Affordable Books & Stationery in Nairobi",
-  "Fast Delivery • Trusted Quality • Student Friendly Prices",
+  "Books, Novels & Office Equipment — All in One Place",
+  "Affordable Stationery & Supplies in Nairobi",
+  "Fast Delivery • Trusted Quality • Unbeatable Prices",
 ];
 
 const Index = () => {
@@ -76,7 +76,7 @@ const Index = () => {
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
             className="text-lg md:text-xl text-primary-foreground/80 mb-10 max-w-2xl mx-auto"
           >
-            Quality books, stationery & office supplies delivered across Nairobi at unbeatable prices.
+            Quality books, novels, stationery & office equipment delivered across Nairobi at unbeatable prices.
           </motion.p>
 
           <motion.div
@@ -93,7 +93,7 @@ const Index = () => {
               to="/shop?category=textbooks"
               className="inline-flex items-center justify-center gap-2 bg-primary-foreground/10 text-primary-foreground px-8 py-4 rounded-xl font-display font-bold text-lg border border-primary-foreground/20 hover:bg-primary-foreground/20 transition-all backdrop-blur-sm"
             >
-              <i className="fa-solid fa-book" /> View Textbooks
+              <i className="fa-solid fa-book" /> Browse Novels & Books
             </Link>
           </motion.div>
 
@@ -120,7 +120,7 @@ const Index = () => {
         <div className="container mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { icon: "fa-truck-fast", title: "Fast Delivery", desc: "Nairobi CBD & beyond" },
+              { icon: "fa-truck-fast", title: "Fast Delivery", desc: "Kabiria & all Nairobi" },
               { icon: "fa-shield-halved", title: "Trusted Quality", desc: "Genuine products" },
               { icon: "fa-tag", title: "Best Prices", desc: "Student-friendly" },
               { icon: "fa-mobile-screen", title: "M-Pesa", desc: "Easy payments" },
@@ -201,7 +201,7 @@ const Index = () => {
             to="/shop"
             className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-8 py-4 rounded-xl font-display font-bold text-lg hover:-translate-y-0.5 transition-all"
           >
-            <i className="fa-solid fa-bag-shopping" /> Equip Your Studies
+            <i className="fa-solid fa-bag-shopping" /> Shop Now
           </Link>
         </div>
       </section>

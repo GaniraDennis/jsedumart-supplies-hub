@@ -14,7 +14,7 @@ const Footer = () => (
             </div>
             <span className="font-display text-lg font-bold">JSEdumart</span>
           </div>
-          <p className="text-sm opacity-80 mb-4">Your trusted source for quality books, stationery & office supplies in Nairobi.</p>
+          <p className="text-sm opacity-80 mb-4">Your trusted source for quality books, novels, stationery & office equipment in Nairobi.</p>
           <div className="flex gap-3">
             <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-primary-foreground/10 flex items-center justify-center hover:bg-accent transition-colors" aria-label="Facebook">
               <i className="fa-brands fa-facebook-f text-sm" />
@@ -50,7 +50,7 @@ const Footer = () => (
         <div>
           <h4 className="font-display text-sm font-semibold mb-4 uppercase tracking-wider opacity-70">Contact Info</h4>
           <div className="flex flex-col gap-3 text-sm opacity-80">
-            <p><i className="fa-solid fa-location-dot mr-2 text-accent" />JS Edumart, Nairobi CBD</p>
+            <p><i className="fa-solid fa-location-dot mr-2 text-accent" />JSEdumart, Kabiria Stage, Nairobi</p>
             <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="hover:opacity-100 transition-opacity">
               <i className="fa-brands fa-whatsapp mr-2 text-accent" />0748 332 788
             </a>
