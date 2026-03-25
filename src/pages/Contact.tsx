@@ -26,7 +26,7 @@ const Contact = () => {
         <div className="grid md:grid-cols-3 gap-8">
           <div className="space-y-4">
             {[
-              { icon: "fa-location-dot", title: "Visit Us", text: "JS Edumart Books & Stationery\nNairobi CBD, Kenya" },
+              { icon: "fa-location-dot", title: "Visit Us", text: "JSEdumart Books & Stationery\nKabiria Stage, Nairobi" },
               { icon: "fa-brands fa-whatsapp", title: "WhatsApp", text: "0748 332 788", href: WHATSAPP_URL },
               { icon: "fa-envelope", title: "Email Us", text: "jsbookshop4@gmail.com", href: "mailto:jsbookshop4@gmail.com" },
               { icon: "fa-clock", title: "Working Hours", text: "Mon-Fri: 8AM - 7PM\nSat: 9AM - 5PM" },
