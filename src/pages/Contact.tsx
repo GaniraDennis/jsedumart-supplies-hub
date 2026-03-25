@@ -74,8 +74,8 @@ const Contact = () => {
               />
               <div className="p-4 flex items-center justify-between">
                 <div>
-                  <p className="font-display font-semibold text-sm">JS Edumart Books & Stationery</p>
-                  <p className="text-xs text-muted-foreground">Nairobi CBD, Kenya</p>
+                  <p className="font-display font-semibold text-sm">JSEdumart Books & Stationery</p>
+                  <p className="text-xs text-muted-foreground">Kabiria Stage, Nairobi</p>
                 </div>
                 <a
                   href="https://share.google/qv62A7CY3yaXoUTeo"
