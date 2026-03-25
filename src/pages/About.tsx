@@ -20,7 +20,7 @@ const About = () => (
         <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
           <h2 className="font-display text-3xl font-bold mb-4">Our Mission</h2>
           <p className="text-muted-foreground leading-relaxed mb-4">
-            JSEdumart was born from a simple belief: every student deserves access to quality educational materials at prices that don't break the bank. Based in Nairobi, we've grown from a small stationery shop to one of Kenya's most trusted online bookstores.
+            JSEdumart was born from a simple belief: every student, teacher, and office deserves access to quality supplies at prices that don't break the bank. Based at Kabiria Stage in Nairobi, we've grown from a small stationery shop to one of Kenya's most trusted suppliers of books, office equipment, novels, and stationery.
           </p>
           <p className="text-muted-foreground leading-relaxed">
             We work directly with manufacturers and publishers to bring you the best prices on everything from exercise books and pens to textbooks and art supplies.
