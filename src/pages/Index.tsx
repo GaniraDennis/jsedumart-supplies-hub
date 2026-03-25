@@ -7,9 +7,9 @@ import { categories } from "@/data/products";
 import { useProducts } from "@/hooks/useProducts";
 
 const heroLines = [
-  "Everything Students Need in One Place",
-  "Affordable Books & Stationery in Nairobi",
-  "Fast Delivery • Trusted Quality • Student Friendly Prices",
+  "Books, Novels & Office Equipment — All in One Place",
+  "Affordable Stationery & Supplies in Nairobi",
+  "Fast Delivery • Trusted Quality • Unbeatable Prices",
 ];
 
 const Index = () => {
