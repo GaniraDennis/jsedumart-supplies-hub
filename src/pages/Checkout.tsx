@@ -2,12 +2,17 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { useStore } from "@/context/StoreContext";
+import { useAuth } from "@/context/AuthContext";
+import { useCreateOrder } from "@/hooks/useOrders";
 import { toast } from "sonner";
 
 const Checkout = () => {
   const { cart, cartTotal, discount, clearCart } = useStore();
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const createOrder = useCreateOrder();
   const [paymentMethod, setPaymentMethod] = useState("mpesa");
+  const [loading, setLoading] = useState(false);
   const discountAmount = cartTotal * discount / 100;
   const shipping = cartTotal > 2000 ? 0 : 150;
   const finalTotal = cartTotal - discountAmount + shipping;
@@ -16,18 +21,55 @@ const Checkout = () => {
     name: "", email: "", phone: "", address: "", city: "Nairobi CBD", notes: ""
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.phone) {
+    if (!form.name.trim() || !form.phone.trim()) {
       toast.error("Please fill in required fields");
       return;
     }
-    const orderId = `JSE-${Date.now().toString(36).toUpperCase()}`;
-    localStorage.setItem("jsedumart_last_order", JSON.stringify({
-      id: orderId, items: cart, total: finalTotal, ...form, paymentMethod, date: new Date().toISOString()
-    }));
-    clearCart();
-    navigate(`/order-confirmation?id=${orderId}`);
+    // Basic phone validation
+    if (!/^0\d{9}$/.test(form.phone.replace(/\s/g, ""))) {
+      toast.error("Please enter a valid phone number (e.g. 0712345678)");
+      return;
+    }
+
+    setLoading(true);
+    const orderRef = `JSE-${Date.now().toString(36).toUpperCase()}`;
+
+    try {
+      const orderData = {
+        order_ref: orderRef,
+        customer_name: form.name.trim(),
+        customer_email: form.email.trim() || null,
+        customer_phone: form.phone.replace(/\s/g, ""),
+        delivery_address: form.address.trim() || null,
+        delivery_city: form.city,
+        notes: form.notes.trim() || null,
+        payment_method: paymentMethod,
+        items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity, image: i.image })),
+        subtotal: cartTotal,
+        discount: discountAmount,
+        shipping,
+        total: finalTotal,
+        status: "pending",
+        user_id: user?.id || null,
+      };
+
+      await createOrder.mutateAsync(orderData);
+
+      // Also save to localStorage for confirmation page
+      localStorage.setItem("jsedumart_last_order", JSON.stringify({
+        id: orderRef, items: cart, total: finalTotal, ...form, paymentMethod, date: new Date().toISOString()
+      }));
+
+      clearCart();
+      navigate(`/order-confirmation?id=${orderRef}`);
+    } catch (err) {
+      console.error("Order error:", err);
+      toast.error("Failed to place order. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (cart.length === 0) {
@@ -43,7 +85,6 @@ const Checkout = () => {
         </h1>
         <form onSubmit={handleSubmit} className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
-            {/* Delivery Details */}
             <div className="bg-card rounded-xl shadow-card p-6">
               <h3 className="font-display text-lg font-bold mb-4">
                 <i className="fa-solid fa-location-dot mr-2 text-accent" />Delivery Details
@@ -75,6 +116,8 @@ const Checkout = () => {
                     <option>Kasarani</option>
                     <option>Karen</option>
                     <option>Langata</option>
+                    <option>Kabiria</option>
+                    <option>Kawangware</option>
                   </select>
                 </div>
                 <div className="sm:col-span-2">
@@ -85,51 +128,49 @@ const Checkout = () => {
                 <div className="sm:col-span-2">
                   <label className="text-sm font-medium mb-1 block">Order Notes</label>
                   <textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                  rows={2} placeholder="Any special instructions..." className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 resize-none" />
+                  rows={2} placeholder="Any special instructions..." maxLength={500} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 resize-none" />
                 </div>
               </div>
             </div>
 
-            {/* Payment */}
             <div className="bg-card rounded-xl shadow-card p-6">
               <h3 className="font-display text-lg font-bold mb-4">
                 <i className="fa-solid fa-credit-card mr-2 text-accent" />Payment Method
               </h3>
               <div className="grid sm:grid-cols-3 gap-3">
                 {[
-                { id: "mpesa", label: "M-Pesa", icon: "fa-mobile-screen", color: "text-success" },
-                { id: "cod", label: "Cash on Delivery", icon: "fa-money-bill-wave", color: "text-warning" },
-                { id: "card", label: "Visa / Mastercard", icon: "fa-credit-card", color: "text-accent" }].
-                map((m) =>
-                <button key={m.id} type="button" onClick={() => setPaymentMethod(m.id)}
-                className={`p-4 rounded-xl border-2 transition-all text-left ${paymentMethod === m.id ? "border-accent bg-accent/5" : "border-border hover:border-muted-foreground/30"}`}>
+                  { id: "mpesa", label: "M-Pesa", icon: "fa-mobile-screen", color: "text-success" },
+                  { id: "cod", label: "Cash on Delivery", icon: "fa-money-bill-wave", color: "text-warning" },
+                  { id: "card", label: "Visa / Mastercard", icon: "fa-credit-card", color: "text-accent" },
+                ].map((m) => (
+                  <button key={m.id} type="button" onClick={() => setPaymentMethod(m.id)}
+                    className={`p-4 rounded-xl border-2 transition-all text-left ${paymentMethod === m.id ? "border-accent bg-accent/5" : "border-border hover:border-muted-foreground/30"}`}>
                     <i className={`fa-solid ${m.icon} text-xl ${m.color} mb-2`} />
                     <p className="font-display text-sm font-semibold">{m.label}</p>
                   </button>
-                )}
+                ))}
               </div>
-              {paymentMethod === "mpesa" &&
-              <div className="mt-4 p-4 rounded-xl bg-success/10 border border-success/20">
+              {paymentMethod === "mpesa" && (
+                <div className="mt-4 p-4 rounded-xl bg-success/10 border border-success/20">
                   <p className="text-sm font-semibold text-success mb-1"><i className="fa-solid fa-info-circle mr-1" /> M-Pesa Instructions</p>
-                  <p className="text-sm text-muted-foreground">​ <span className="font-mono font-bold">123456</span></p>
+                  <p className="text-sm text-muted-foreground">Till Number: <span className="font-mono font-bold">123456</span></p>
                   <p className="text-sm text-muted-foreground">Amount: <span className="font-bold">KSh {finalTotal.toLocaleString()}</span></p>
                 </div>
-              }
+              )}
             </div>
           </div>
 
-          {/* Summary */}
           <div className="bg-card rounded-xl shadow-card p-6 h-fit sticky top-32">
             <h3 className="font-display text-lg font-bold mb-4">
               <i className="fa-solid fa-receipt mr-2 text-accent" />Order Summary
             </h3>
             <div className="space-y-3 mb-4">
-              {cart.map((item) =>
-              <div key={item.id} className="flex justify-between text-sm">
+              {cart.map((item) => (
+                <div key={item.id} className="flex justify-between text-sm">
                   <span className="text-muted-foreground truncate mr-2">{item.name} ×{item.quantity}</span>
                   <span className="shrink-0">KSh {(item.price * item.quantity).toLocaleString()}</span>
                 </div>
-              )}
+              ))}
             </div>
             <div className="border-t border-border pt-3 space-y-2 text-sm">
               <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>KSh {cartTotal.toLocaleString()}</span></div>
@@ -139,14 +180,15 @@ const Checkout = () => {
                 <span>Total</span><span>KSh {finalTotal.toLocaleString()}</span>
               </div>
             </div>
-            <button type="submit" className="mt-4 w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-4 rounded-xl font-display font-bold hover:-translate-y-0.5 transition-all shadow-md">
-              <i className="fa-solid fa-check" /> Place Order
+            <button type="submit" disabled={loading} className="mt-4 w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-4 rounded-xl font-display font-bold hover:-translate-y-0.5 transition-all shadow-md disabled:opacity-50">
+              {loading ? <i className="fa-solid fa-spinner fa-spin" /> : <i className="fa-solid fa-check" />}
+              {loading ? "Placing Order..." : "Place Order"}
             </button>
           </div>
         </form>
       </div>
-    </Layout>);
-
+    </Layout>
+  );
 };
 
 export default Checkout;
