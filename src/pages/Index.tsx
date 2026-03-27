@@ -52,7 +52,7 @@ const Index = () => {
 
         <div className="container mx-auto relative z-10 text-center py-20 px-4">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <span className="inline-block bg-warning/20 text-warning px-4 py-1.5 rounded-full text-sm font-semibold mb-6 backdrop-blur-sm border border-warning/30">
+            <span className="inline-block bg-warning/20 text-warning px-4 py-1.5 rounded-full text-sm font-semibold mb-[2em] backdrop-blur-sm border border-warning/30">
               <i className="fa-solid fa-sparkles mr-2" />Back to School 2026 ✏️
             </span>
           </motion.div>
@@ -65,7 +65,7 @@ const Index = () => {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -40, scale: 0.95 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
-                className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground max-w-5xl mx-auto leading-tight text-balance drop-shadow-lg"
+                className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground max-w-5xl mx-auto leading-tight text-balance drop-shadow-lg"
               >
                 {heroLines[currentLine]}
               </motion.h1>
@@ -74,7 +74,7 @@ const Index = () => {
 
           <motion.p
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-            className="text-lg md:text-xl text-primary-foreground/80 mb-10 max-w-2xl mx-auto"
+            className="text-lg md:text-xl text-primary-foreground/80 mb-10 max-w-2xl mx-auto mt-18"
           >
             Quality books, novels, stationery & office equipment delivered across Nairobi at unbeatable prices.
           </motion.p>
