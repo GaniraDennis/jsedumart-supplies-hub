@@ -7,7 +7,7 @@ const faqs = [
   { q: "How long does delivery take?", a: "We deliver within 24-48 hours in Nairobi. Orders placed before 2PM are dispatched the same day." },
   { q: "Can I return a product?", a: "Yes! We offer a 7-day return policy for unused items in original packaging. Contact us to initiate a return." },
   { q: "Do you offer bulk/school orders?", a: "Yes! We offer special discounts for bulk school orders. Contact us at hello@jsedumart.co.ke for a custom quote." },
-  { q: "How do I pay via M-Pesa?", a: "At checkout, select M-Pesa and use our { q: "How do I pay via M-Pesa?", a: "At checkout, select M-Pesa and use our Till Number 7815771. Enter the exact amount shown at checkout." },. Enter the exact amount shown at checkout." },
+  { q: "How do I pay via M-Pesa?", a: "At checkout, select M-Pesa and use our Till Number 7815771. Enter the exact amount shown at checkout." },
   { q: "Do you have a physical store?", a: "Yes! Visit us at Moi Avenue, Nairobi CBD. Open Mon-Fri 8AM-7PM, Sat 9AM-5PM." },
   { q: "How can I track my order?", a: "Use the Track Order page with your Order ID. You'll also receive SMS updates on your order status." },
 ];
