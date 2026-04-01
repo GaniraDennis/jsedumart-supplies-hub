@@ -153,7 +153,7 @@ const Checkout = () => {
               {paymentMethod === "mpesa" && (
                 <div className="mt-4 p-4 rounded-xl bg-success/10 border border-success/20">
                   <p className="text-sm font-semibold text-success mb-1"><i className="fa-solid fa-info-circle mr-1" /> M-Pesa Instructions</p>
-                  <p className="text-sm text-muted-foreground">Till Number: <span className="font-mono font-bold">123456</span></p>
+                  <p className="text-sm text-muted-foreground"><p className="text-sm text-muted-foreground">Till Number: <span className="font-mono font-bold">7815771</span></p></p>
                   <p className="text-sm text-muted-foreground">Amount: <span className="font-bold">KSh {finalTotal.toLocaleString()}</span></p>
                 </div>
               )}

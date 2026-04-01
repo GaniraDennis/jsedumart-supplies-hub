@@ -299,7 +299,7 @@ const Admin = () => {
           {activeTab === "settings" && (
             <div className="max-w-2xl space-y-6">
               {[
-                { title: "Payment Methods", icon: "fa-credit-card", fields: [{ label: "M-Pesa Till Number", value: "123456" }, { label: "Accept Cash on Delivery", value: "Yes" }] },
+                { title: "Payment Methods", icon: "fa-credit-card", fields: [{ title: "Payment Methods", icon: "fa-credit-card", fields: [{ label: "M-Pesa Till Number", value: "7815771" }, { label: "Accept Cash on Delivery", value: "Yes" }] },, { label: "Accept Cash on Delivery", value: "Yes" }] },
                 { title: "Shipping", icon: "fa-truck", fields: [{ label: "Standard Delivery Fee", value: "KSh 150" }, { label: "Free Delivery Threshold", value: "KSh 2,000" }] },
                 { title: "Store Info", icon: "fa-store", fields: [{ label: "Currency", value: "KSh (Kenyan Shilling)" }, { label: "Tax Rate", value: "16% VAT" }] },
                 { title: "Contact", icon: "fa-phone", fields: [{ label: "WhatsApp", value: "0748 332 788" }, { label: "Email", value: "jsbookshop4@gmail.com" }] },
