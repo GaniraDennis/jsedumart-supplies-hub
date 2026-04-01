@@ -27,89 +27,148 @@ const Index = () => {
   return (
     <Layout>
       {/* Hero */}
-      <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
-        {/* Animated gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-accent/80" />
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-0 left-0 w-72 h-72 bg-accent/40 rounded-full blur-3xl animate-float" />
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-warning/20 rounded-full blur-3xl animate-float" style={{ animationDelay: "2s" }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent/10 rounded-full blur-3xl animate-pulse-soft" />
+      <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
+        {/* Animated gradient background with mesh effect */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/95 to-accent/70" />
+        <div className="absolute inset-0">
+          <motion.div
+            className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-accent/30 rounded-full blur-[100px]"
+            animate={{ x: [0, 60, 0], y: [0, 40, 0], scale: [1, 1.2, 1] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute bottom-[-10%] right-[-5%] w-[600px] h-[600px] bg-warning/15 rounded-full blur-[120px]"
+            animate={{ x: [0, -50, 0], y: [0, -30, 0], scale: [1.1, 0.9, 1.1] }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-accent/15 rounded-full blur-[80px]"
+            animate={{ scale: [0.8, 1.3, 0.8], opacity: [0.3, 0.6, 0.3] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          />
         </div>
-        {/* Floating icons */}
+
+        {/* Grid pattern overlay */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
+
+        {/* Floating icons with better spread */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {["fa-pencil", "fa-book", "fa-graduation-cap", "fa-palette", "fa-calculator", "fa-ruler"].map((icon, i) => (
+          {[
+            { icon: "fa-pencil", top: "10%", left: "8%", size: "text-2xl" },
+            { icon: "fa-book-open", top: "20%", left: "85%", size: "text-4xl" },
+            { icon: "fa-graduation-cap", top: "70%", left: "12%", size: "text-3xl" },
+            { icon: "fa-palette", top: "15%", left: "45%", size: "text-2xl" },
+            { icon: "fa-calculator", top: "75%", left: "80%", size: "text-3xl" },
+            { icon: "fa-print", top: "50%", left: "5%", size: "text-2xl" },
+            { icon: "fa-pen-nib", top: "60%", left: "90%", size: "text-2xl" },
+            { icon: "fa-book", top: "40%", left: "92%", size: "text-3xl" },
+          ].map((item, i) => (
             <motion.div
-              key={icon}
-              className="absolute text-primary-foreground/10 text-3xl"
-              style={{ top: `${15 + i * 14}%`, left: `${5 + i * 16}%` }}
-              animate={{ y: [0, -20, 0], rotate: [0, 10, -10, 0] }}
-              transition={{ duration: 4 + i, repeat: Infinity, ease: "easeInOut" }}
+              key={item.icon}
+              className={`absolute text-primary-foreground/[0.07] ${item.size}`}
+              style={{ top: item.top, left: item.left }}
+              animate={{ y: [0, -30, 0], x: [0, 10, -10, 0], rotate: [0, 15, -15, 0] }}
+              transition={{ duration: 5 + i * 0.7, repeat: Infinity, ease: "easeInOut", delay: i * 0.5 }}
             >
-              <i className={`fa-solid ${icon}`} />
+              <i className={`fa-solid ${item.icon}`} />
             </motion.div>
           ))}
         </div>
 
         <div className="container mx-auto relative z-10 text-center py-20 px-4">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <span className="inline-block bg-warning/20 text-warning px-4 py-1.5 rounded-full text-sm font-semibold mb-6 backdrop-blur-sm border border-warning/30">
-              <i className="fa-solid fa-sparkles mr-2" />Back to School 2026 ✏️
+          <motion.div
+            initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: 0.8, ease: [0.25, 0.4, 0.25, 1] }}
+          >
+            <span className="inline-flex items-center gap-2 bg-warning/20 text-warning px-5 py-2 rounded-full text-sm font-semibold mb-8 backdrop-blur-md border border-warning/30 shadow-lg shadow-warning/10">
+              <motion.i
+                className="fa-solid fa-sparkles"
+                animate={{ rotate: [0, 20, -20, 0], scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+              Back to School 2026 ✏️
             </span>
           </motion.div>
 
-          <div className="h-28 md:h-24 flex items-center justify-center mb-8">
+          <div className="h-32 md:h-28 flex items-center justify-center mb-8">
             <AnimatePresence mode="wait">
               <motion.h1
                 key={currentLine}
-                initial={{ opacity: 0, y: 40, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -40, scale: 0.95 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground max-w-5xl mx-auto leading-tight text-balance drop-shadow-lg"
+                initial={{ opacity: 0, y: 50, filter: "blur(8px)", scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)", scale: 1 }}
+                exit={{ opacity: 0, y: -50, filter: "blur(8px)", scale: 0.9 }}
+                transition={{ duration: 0.7, ease: [0.25, 0.4, 0.25, 1] }}
+                className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground max-w-5xl mx-auto leading-tight text-balance"
+                style={{ textShadow: "0 4px 30px rgba(0,0,0,0.3)" }}
               >
                 {heroLines[currentLine]}
               </motion.h1>
             </AnimatePresence>
           </div>
 
+          {/* Line indicator dots */}
+          <div className="flex justify-center gap-2 mb-8">
+            {heroLines.map((_, i) => (
+              <motion.button
+                key={i}
+                onClick={() => setCurrentLine(i)}
+                className={`h-1.5 rounded-full transition-all duration-500 ${i === currentLine ? "bg-accent w-8" : "bg-primary-foreground/30 w-3 hover:bg-primary-foreground/50"}`}
+                whileHover={{ scale: 1.3 }}
+              />
+            ))}
+          </div>
+
           <motion.p
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
             className="text-lg md:text-xl text-primary-foreground/80 mb-10 max-w-2xl mx-auto"
           >
             Quality books, novels, stationery & office equipment delivered across Nairobi at unbeatable prices.
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <Link
               to="/shop"
-              className="inline-flex items-center justify-center gap-2 bg-accent text-accent-foreground px-8 py-4 rounded-xl font-display font-bold text-lg hover:-translate-y-1 hover:shadow-xl transition-all shadow-lg"
+              className="group inline-flex items-center justify-center gap-2 bg-accent text-accent-foreground px-8 py-4 rounded-xl font-display font-bold text-lg hover:-translate-y-1 hover:shadow-2xl hover:shadow-accent/30 transition-all duration-300 shadow-lg"
             >
-              <i className="fa-solid fa-bag-shopping" /> Shop Now
+              <i className="fa-solid fa-bag-shopping group-hover:scale-110 transition-transform" /> Shop Now
             </Link>
             <Link
               to="/shop?category=textbooks"
-              className="inline-flex items-center justify-center gap-2 bg-primary-foreground/10 text-primary-foreground px-8 py-4 rounded-xl font-display font-bold text-lg border border-primary-foreground/20 hover:bg-primary-foreground/20 transition-all backdrop-blur-sm"
+              className="group inline-flex items-center justify-center gap-2 bg-primary-foreground/10 text-primary-foreground px-8 py-4 rounded-xl font-display font-bold text-lg border border-primary-foreground/20 hover:bg-primary-foreground/20 hover:-translate-y-1 transition-all duration-300 backdrop-blur-sm"
             >
-              <i className="fa-solid fa-book" /> Browse Novels & Books
+              <i className="fa-solid fa-book group-hover:scale-110 transition-transform" /> Browse Novels & Books
             </Link>
           </motion.div>
 
           {/* Trust badges */}
           <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
-            className="flex flex-wrap justify-center gap-6 mt-12 text-primary-foreground/60 text-sm"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9, duration: 0.6 }}
+            className="flex flex-wrap justify-center gap-8 mt-14 text-primary-foreground/60 text-sm"
           >
             {[
               { icon: "fa-truck-fast", text: "Free delivery over KSh 5,000" },
               { icon: "fa-shield-halved", text: "Genuine products" },
               { icon: "fa-mobile-screen", text: "M-Pesa accepted" },
-            ].map((b) => (
-              <span key={b.text} className="flex items-center gap-2">
-                <i className={`fa-solid ${b.icon}`} /> {b.text}
-              </span>
+            ].map((b, i) => (
+              <motion.span
+                key={b.text}
+                className="flex items-center gap-2 backdrop-blur-sm bg-primary-foreground/5 px-4 py-2 rounded-full border border-primary-foreground/10"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 1 + i * 0.15 }}
+              >
+                <i className={`fa-solid ${b.icon} text-accent`} /> {b.text}
+              </motion.span>
             ))}
           </motion.div>
         </div>
